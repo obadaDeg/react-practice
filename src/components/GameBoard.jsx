@@ -1,26 +1,20 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 
-const initialGameBoard = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
+export default function GameBoard({ gameBoard, onSelectCell }) {
+  //   const [gameBoard, setGameBoard] = useState(initialGameBoard);
 
-export default function GameBoard({ activePlayer, onSelectCell }) {
-  const [gameBoard, setGameBoard] = useState(initialGameBoard);
+  //   function handleSelectCell(rowIndex, colIndex) {
+  //     setGameBoard((prevGameBoard) => {
+  //       const updatedBoard = [...prevGameBoard.map((cell) => [...cell])];
+  //       console.log(updatedBoard);
 
-  function handleSelectCell(rowIndex, colIndex) {
-    setGameBoard((prevGameBoard) => {
-      const updatedBoard = [...prevGameBoard.map((cell) => [...cell])];
-      console.log(updatedBoard);
+  //       updatedBoard[rowIndex][colIndex] = activePlayer;
+  //       return updatedBoard;
+  //     });
 
-      updatedBoard[rowIndex][colIndex] = activePlayer;
-      return updatedBoard;
-    });
+  //     onSelectCell();
+  //   }
 
-    onSelectCell();
-  }
   return (
     <ol id="game-board">
       {gameBoard.map((row, rowIndex) => (
@@ -28,7 +22,10 @@ export default function GameBoard({ activePlayer, onSelectCell }) {
           <ol>
             {row.map((cell, colIndex) => (
               <li key={colIndex}>
-                <button onClick={() => handleSelectCell(rowIndex, colIndex)}>
+                <button
+                  onClick={() => onSelectCell(rowIndex, colIndex)}
+                  disabled={cell !== null}
+                >
                   {cell}
                 </button>
               </li>
@@ -41,6 +38,7 @@ export default function GameBoard({ activePlayer, onSelectCell }) {
 }
 
 GameBoard.propTypes = {
-  activePlayer: PropTypes.string.isRequired,
+  //   activePlayer: PropTypes.string.isRequired,
+  gameBoard: PropTypes.array.isRequired,
   onSelectCell: PropTypes.func.isRequired,
 };

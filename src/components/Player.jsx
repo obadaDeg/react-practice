@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-export default function Player({ name, symbol, isActive }) {
+export default function Player({ name, symbol, isActive, onNameChange }) {
   //   const [isEditing, setIsEditing ] = useState(false); // removed
 
   const [editingState, setEditingState] = useState({
@@ -10,16 +10,19 @@ export default function Player({ name, symbol, isActive }) {
   });
 
   function handleEditBtn() {
-    console.log(editingState);
+    if (editingState.isEditing) {
+      onNameChange(symbol, editingState.playerName);
+    }
 
     setEditingState((prev) => ({ ...prev, isEditing: !prev.isEditing }));
     // setIsEditing(!isEditing); // is not effitient way
   }
 
   function handleInputName(e) {
+    const newName = e.target.value;
     setEditingState((prev) => ({
       ...prev,
-      playerName: e.target.value,
+      playerName: newName,
     }));
   }
 
@@ -49,4 +52,5 @@ Player.propTypes = {
   name: PropTypes.string.isRequired,
   symbol: PropTypes.string.isRequired,
   isActive: PropTypes.bool.isRequired,
+  onNameChange: PropTypes.func.isRequired,
 };
