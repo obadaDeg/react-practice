@@ -10,4 +10,6 @@
 
    - two way binding: listening to a change and feed out the value of this change. For example in the input field, we are listening to the change on the input field and reflect this change on the value of the input field which shows the new state of the value.
 
-4. 
+4. when handling with object or array (any reference object) its prefered to copy copy first, then handle the required data.
+
+5. 
