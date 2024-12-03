@@ -1,5 +1,4 @@
-import CoreConcept from "./CoreConcept";
-import { CORE_CONCEPTS } from "../data";
+import CoreConceptsSection from "./CoreConceptsSection";
 import ExamplesSection from "./ExamplesSection";
 
 export default function MainSection() {
@@ -8,13 +7,7 @@ export default function MainSection() {
 
   return (
     <main>
-      <section id="core-concepts">
-        <ul>
-          {CORE_CONCEPTS.map((item) => (
-            <CoreConcept key={item.title} {...item} />
-          ))}
-        </ul>
-      </section>
+      <CoreConceptsSection />
       <ExamplesSection />
     </main>
   );
