@@ -12,4 +12,4 @@
 
 4. when handling with object or array (any reference object) its prefered to copy copy first, then handle the required data.
 
-5. 
+5. Lifting the state up: when some seprate components need to handle the same data, instead of making 2 different states in each component, we can lift the state up to the closest common ansestor component share the data through it. 

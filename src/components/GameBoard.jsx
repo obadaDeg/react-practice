@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 const initialGameBoard = [
   [null, null, null],
@@ -6,7 +7,7 @@ const initialGameBoard = [
   [null, null, null],
 ];
 
-export default function GameBoard() {
+export default function GameBoard({ activePlayer, onSelectCell }) {
   const [gameBoard, setGameBoard] = useState(initialGameBoard);
 
   function handleSelectCell(rowIndex, colIndex) {
@@ -14,9 +15,11 @@ export default function GameBoard() {
       const updatedBoard = [...prevGameBoard.map((cell) => [...cell])];
       console.log(updatedBoard);
 
-      updatedBoard[rowIndex][colIndex] = "x";
+      updatedBoard[rowIndex][colIndex] = activePlayer;
       return updatedBoard;
     });
+
+    onSelectCell();
   }
   return (
     <ol id="game-board">
@@ -36,3 +39,8 @@ export default function GameBoard() {
     </ol>
   );
 }
+
+GameBoard.propTypes = {
+  activePlayer: PropTypes.string.isRequired,
+  onSelectCell: PropTypes.func.isRequired,
+};

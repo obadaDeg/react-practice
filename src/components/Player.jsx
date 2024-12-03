@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-export default function Player({ name, symbol }) {
+export default function Player({ name, symbol, isActive }) {
   //   const [isEditing, setIsEditing ] = useState(false); // removed
 
   const [editingState, setEditingState] = useState({
@@ -24,7 +24,7 @@ export default function Player({ name, symbol }) {
   }
 
   return (
-    <li>
+    <li className={isActive ? "active" : ""}>
       <span className="player">
         {editingState.isEditing ? (
           <input
@@ -48,4 +48,5 @@ export default function Player({ name, symbol }) {
 Player.propTypes = {
   name: PropTypes.string.isRequired,
   symbol: PropTypes.string.isRequired,
+  isActive: PropTypes.bool.isRequired,
 };
