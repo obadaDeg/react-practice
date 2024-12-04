@@ -47,15 +47,21 @@ function App() {
       ...prevTurns,
       player: prevTurns.player === "X" ? "O" : "X",
       log: [
-        { player: prevTurns.player, position: { row: rowIndex, col: colIndex } },
+        {
+          player: prevTurns.player,
+          position: { row: rowIndex, col: colIndex },
+        },
         ...prevTurns.log,
       ],
     }));
   }
-  
 
   function handleRematch() {
-    setTurns({ player: "X", log: [] });
+    setTurns((prevTurns) => ({
+      player: "X",
+      log: [],
+      playersName: prevTurns.playersName,
+    }));
     console.log(turns);
     console.log(gameBoard);
   }
@@ -116,7 +122,11 @@ function App() {
         </ol>
         <GameBoard onSelectCell={handleSelectCell} gameBoard={gameBoard} />
         {(winner || hasDraw) && (
-          <GameOver winner={winner} onRematch={handleRematch} names={turns.playersName}/>
+          <GameOver
+            winner={winner}
+            onRematch={handleRematch}
+            names={turns.playersName}
+          />
         )}
       </div>
       <Log turns={turns.log} />
