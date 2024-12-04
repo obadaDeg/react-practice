@@ -1,135 +1,91 @@
-import Player from "./components/Player";
-import GameBoard from "./components/GameBoard";
 import { useState } from "react";
-import Log from "./components/Log";
-import { WINNING_COMBINATIONS } from "./winning_compinations";
-import GameOver from "./components/GameOver";
-
-const BOARD_SIZE = 3;
-const PLAYERS = {
-  X: "Player 1",
-  O: "Player 2",
-};
-
-// function deriveActivePlayer(gameTurns) {
-//   let currentPlayer = 'X';
-
-//   if(gameTurns.length > 0 && gameTurns[0].player === 'X') {
-//     currentPlayer = 'O';
-//   }
-
-//   return currentPlayer;
-// }
+import TableRow from "./components/TableRow";
+import UserInput from "./components/UserInput";
+import { formatter, calculateInvestmentResults } from "./utils/investment";
+import { keyToID, cols } from "./utils/constants";
 
 function App() {
-  const [turns, setTurns] = useState({
-    player: "X",
-    log: [],
-    playersName: PLAYERS,
-  });
-  // const [activePlayer, setActivePlayer] = useState("X");
-  // const []
-  // function handleSelectCell(rowIndex, colIndex) {
-  //   setActivePlayer((currentActivePlayer) =>
-  //     currentActivePlayer === "X" ? "O" : "X"
-  //   );
-
-  //   setTurns((prevTurns) => {
-  //     const updatedTurns = {
-  //       square: { row: rowIndex, col: colIndex },
-  //       ...prevTurns,
-  //     };
-  //   });
-  // }
-
-  function handleSelectCell(rowIndex, colIndex) {
-    setTurns((prevTurns) => ({
-      ...prevTurns,
-      player: prevTurns.player === "X" ? "O" : "X",
-      log: [
-        {
-          player: prevTurns.player,
-          position: { row: rowIndex, col: colIndex },
-        },
-        ...prevTurns.log,
-      ],
-    }));
-  }
-
-  function handleRematch() {
-    setTurns((prevTurns) => ({
-      player: "X",
-      log: [],
-      playersName: prevTurns.playersName,
-    }));
-    console.log(turns);
-    console.log(gameBoard);
-  }
-
-  function handleChangeNames(symbol, updatedName) {
-    setTurns((prevTurns) => {
-      let updatedData = {
-        ...prevTurns,
-        playersName: { ...prevTurns.playersName, [symbol]: updatedName },
-      };
-
-      return updatedData;
-    });
-  }
-
-  const gameBoard = Array.from({ length: BOARD_SIZE }, () =>
-    Array(BOARD_SIZE).fill(null)
-  );
-
-  turns.log.forEach(({ player, position: { row, col } }) => {
-    gameBoard[row][col] = player;
+  const [dataEntries, setDataEntries] = useState({
+    initialInvestment: 0,
+    annualInvestment: 0,
+    expectedReturn: 0,
+    duration: 0,
   });
 
-  let winner;
+  function handleInputValue(e) {
+    // console.log(e.target.value);
+    // console.log(e.target.id);
+    let id = e.target.id;
 
-  WINNING_COMBINATIONS.forEach((compination) => {
-    const firstSquare = gameBoard[compination[0].row][compination[0].column];
-    const secondSquare = gameBoard[compination[1].row][compination[1].column];
-    const thirdquare = gameBoard[compination[2].row][compination[2].column];
-
-    if (
-      firstSquare &&
-      firstSquare === secondSquare &&
-      firstSquare === thirdquare
-    ) {
-      winner = firstSquare;
+    if (e.target.value >= 0) {
+      setDataEntries((prevData) => {
+        let updatedData = {
+          ...prevData,
+          [keyToID[id]]: +e.target.value,
+        };
+        return updatedData;
+      });
     }
-  });
 
-  const hasDraw = turns.log.length === 9 && !winner;
+    // console.log(dataEntries);
+  }
+
+  let dataDerived = [];
+
+  let allFieldsFilled =
+    dataEntries.annualInvestment &&
+    dataEntries.duration &&
+    dataEntries.expectedReturn &&
+    dataEntries.initialInvestment;
+
+  if (allFieldsFilled) {
+    dataDerived = calculateInvestmentResults(dataEntries);
+    console.log(dataDerived);
+    console.log(dataEntries);
+  }
+
+  let totalIntrest = 0;
+  let initialValue = 0;
+  let investedCapital = initialValue;
+
+  for (let i = 0; i < dataDerived.length; i++) {
+    totalIntrest += dataDerived[i].interest;
+    investedCapital;
+
+    dataDerived[i] = {
+      year: dataDerived[i].year,
+      valueEndOfYear: formatter.format(dataDerived[i].valueEndOfYear),
+      interest: formatter.format(dataDerived[i].interest),
+      totalIntrest: formatter.format(totalIntrest),
+      investedCapital: formatter.format(
+        investedCapital + dataDerived[i].annualInvestment
+      ),
+    };
+  }
 
   return (
     <main>
-      <div id="game-container">
-        <ol id="players" className="highlight-player">
-          <Player
-            name="Player 1"
-            symbol="X"
-            isActive={turns.player === "X"}
-            onNameChange={handleChangeNames}
-          />
-          <Player
-            name="Player 2"
-            symbol="O"
-            isActive={turns.player === "O"}
-            onNameChange={handleChangeNames}
-          />
-        </ol>
-        <GameBoard onSelectCell={handleSelectCell} gameBoard={gameBoard} />
-        {(winner || hasDraw) && (
-          <GameOver
-            winner={winner}
-            onRematch={handleRematch}
-            names={turns.playersName}
-          />
-        )}
-      </div>
-      <Log turns={turns.log} />
+      <UserInput handleInputValue={handleInputValue} data={dataEntries} />
+      <section className="center">
+        <table id="result">
+          <thead>
+            <TableRow tableData={cols} />
+          </thead>
+          <tbody>
+            {dataDerived &&
+              dataDerived.map((row, idx) => {
+                // console.log(row);
+                // console.log(Array.from(Object.values(row)));
+                return (
+                  <TableRow
+                    key={idx}
+                    tableData={Array.from(Object.values(row))}
+                  />
+                );
+              })}
+          </tbody>
+        </table>
+      </section>
     </main>
   );
 }
