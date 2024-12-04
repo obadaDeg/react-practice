@@ -45,7 +45,7 @@ function App() {
   }
 
   let totalIntrest = 0;
-  let initialValue = 0;
+  let initialValue = dataEntries.initialInvestment;
   let investedCapital = initialValue;
 
   for (let i = 0; i < dataDerived.length; i++) {
