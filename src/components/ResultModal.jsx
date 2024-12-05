@@ -1,4 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
+import { createPortal } from "react-dom";
 
 const ResultModal = forwardRef(function ResultModal(
   { targetTime, timeRemaining, onReset },
@@ -23,12 +24,16 @@ const ResultModal = forwardRef(function ResultModal(
   function handleOverlayClick(e) {
     if (e.target === dialog.current) {
       dialog.current.close();
-      onReset();
     }
   }
 
-  return (
-    <dialog ref={dialog} className="result-modal" onClick={handleOverlayClick}>
+  return createPortal(
+    <dialog
+      ref={dialog}
+      className="result-modal"
+      onClick={handleOverlayClick}
+      onClose={onReset}
+    >
       <div className="div-content">
         {userLost && <h2>You {userLost ? "Lost" : "Win"}</h2>}
         {!userLost && <h2>Your Score: {score}</h2>}
@@ -43,7 +48,8 @@ const ResultModal = forwardRef(function ResultModal(
           <button>Close</button>
         </form>
       </div>
-    </dialog>
+    </dialog>,
+    document.getElementById("modal")
   );
 });
 
