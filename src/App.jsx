@@ -1,17 +1,12 @@
-import Player from './components/Player.jsx';
-import TimerChallenge from './components/TimerChallenge.jsx';
+import MainContent from "./components/MainContent";
+import SideBar from "./components/SideBar";
 
 function App() {
   return (
-    <>
-      <Player />
-      <div id="challenges">
-        <TimerChallenge title={"easy"} targetTime={1}/>
-        <TimerChallenge title={"not easy"} targetTime={5}/>
-        <TimerChallenge title={"getting hard"} targetTime={10}/>
-        <TimerChallenge title={"Pros only"} targetTime={15}/>
-      </div>
-    </>
+    <main className="h-screen flex gap-8">
+      <SideBar />
+      <MainContent />
+    </main>
   );
 }
 
