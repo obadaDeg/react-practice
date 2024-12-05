@@ -17,3 +17,9 @@
 1. Using Refs for More Than "DOM Element Connections". For example : in this project refs were used to start and stop a challenge timer without affecting other challenges.
 
 2. 
+
+
+# Hooks Summary: 
+
+1. **useRef:**
+2. **useImperativeHandle:** 
