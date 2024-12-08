@@ -43,3 +43,6 @@ Creating a Context must follow the following steps:
 1. Create
 2. Provide
 3. Consume
+
+
+## useReducer
