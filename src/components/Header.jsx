@@ -1,4 +1,4 @@
-import CartContext from "../store/shopping-cart-context.jsx";
+import { CartContext } from "../store/shopping-cart-context.jsx";
 import CartModal from "./CartModal.jsx";
 import { useContext, useRef } from "react";
 
