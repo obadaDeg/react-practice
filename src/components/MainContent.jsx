@@ -4,13 +4,14 @@ import notebookIcon from "../assets/no-projects.png";
 import Button from "./Button";
 import ProjectData from "./ProjectData";
 
-export default function MainContent({ project = true }) {
-  return project ? (
+export default function MainContent({ project, handleNewProject }) {
+  if (!project) {
     <div div className="w-3/5 flex flex-col mt-28">
-      {/* <NewProjectForm /> */}
-      <ProjectData />
-    </div>
-  ) : (
+      {project === undefined ? <NewProjectForm /> : <ProjectData />}{" "}
+    </div>;
+  }
+
+  return (
     <div className="w-full flex flex-col items-center justify-center">
       <img
         src={notebookIcon}
@@ -23,7 +24,7 @@ export default function MainContent({ project = true }) {
       <p className="mb-4 text-stone-400">
         Select project or get started with new one
       </p>
-      <Button>Create New Project</Button>
+      <Button onClick={handleNewProject}>Create New Project</Button>
     </div>
   );
 }

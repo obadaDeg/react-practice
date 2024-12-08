@@ -42,11 +42,13 @@ export default function Button({
   variant = "filled",
   isDarkBackground = false,
   icon = null,
+  className,
 //   danger = false,
-  children
+  children,
+  ...props
 }) {
   return (
-    <button className={getButtonStyles(variant, isDarkBackground)}>
+    <button className={`${getButtonStyles(variant, isDarkBackground)} ${className}`} {...props}>
       {icon && <span className="mr-2">{icon}</span>}
       {children}
     </button>
