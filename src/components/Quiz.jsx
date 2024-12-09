@@ -1,5 +1,5 @@
 import React, { useCallback, useReducer, useRef, useState } from "react";
-import QuizCompleted from "./QuizCompleted";
+import Summary from "./Summary.jsx";
 import QUESTIONS from '../utils/questions.js'
 import QuestionTimer from "./QuestionTimer";
 import Question from "./Question";
@@ -26,7 +26,7 @@ export default function Quiz() {
   );
 
   if (quizIsOver) {
-    return <QuizCompleted />;
+    return <Summary userAnswers={answeredQuestions} />;
   }
 
   return (
