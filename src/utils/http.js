@@ -9,6 +9,17 @@ export async function fetchAvilablePlaces() {
   return data;
 }
 
+export async function fetchUserPlaces() {
+  const response = await fetch("http://localhost:3000/user-places");
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error("Faild to fetch places");
+  }
+
+  return data;
+}
+
 export async function updateAvilablePlaces(places) {
   const response = await fetch("http://localhost:3000/user-places", {
     method: "PUT",
@@ -28,3 +39,4 @@ export async function updateAvilablePlaces(places) {
 
   return resData;
 }
+

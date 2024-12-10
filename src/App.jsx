@@ -1,11 +1,11 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 
 import Places from "./components/Places.jsx";
 import Modal from "./components/Modal.jsx";
 import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
 import logoImg from "./assets/logo.png";
 import AvailablePlaces from "./components/AvailablePlaces.jsx";
-import { updateAvilablePlaces } from "./utils/http.js";
+import { fetchUserPlaces, updateAvilablePlaces } from "./utils/http.js";
 import Error from "./components/Error.jsx";
 import UpdatedSuccess from "./components/UpdatedSuccess.jsx";
 
@@ -16,6 +16,18 @@ function App() {
   const [updatedPlacesStatus, setUpdatedPlacesStatus] = useState();
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await fetchUserPlaces();
+        setUserPlaces(() => data.places);
+        // we can add loading logic here also as we did in hte AvilablePlaces Component.
+      } catch (error) {
+        // some logic goes here such as error modal... etc
+      }
+    })();
+  }, []);
 
   function handleStartRemovePlace(place) {
     setModalIsOpen(true);
@@ -51,13 +63,29 @@ function App() {
     }
   }
 
-  const handleRemovePlace = useCallback(async function handleRemovePlace() {
-    setUserPlaces((prevPickedPlaces) =>
-      prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id)
-    );
+  const handleRemovePlace = useCallback(
+    async function handleRemovePlace() {
+      setUserPlaces((prevPickedPlaces) =>
+        prevPickedPlaces.filter(
+          (place) => place.id !== selectedPlace.current.id
+        )
+      );
 
-    setModalIsOpen(false);
-  }, []);
+      try {
+        await updateAvilablePlaces(
+          userPlaces.filter((place) => place.id !== selectedPlace.current.id)
+        );
+      } catch (error) {
+        setUserPlaces(userPlaces);
+        setUpdatedPlacesStatus({
+          message: error.message || "Failed to delete place.",
+        });
+      }
+
+      setModalIsOpen(false);
+    },
+    [userPlaces]
+  );
 
   function handleUpdating() {
     setUpdatedPlacesStatus(null);
