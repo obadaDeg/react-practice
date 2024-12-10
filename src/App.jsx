@@ -1,34 +1,112 @@
-import { useState } from 'react';
+import { useRef, useState, useCallback } from "react";
 
-import Counter from './components/Counter/Counter.jsx';
-import Header from './components/Header.jsx';
-import { log } from './utils/log.js';
+import Places from "./components/Places.jsx";
+import Modal from "./components/Modal.jsx";
+import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
+import logoImg from "./assets/logo.png";
+import AvailablePlaces from "./components/AvailablePlaces.jsx";
+import { updateAvilablePlaces } from "./utils/http.js";
+import Error from "./components/Error.jsx";
+import UpdatedSuccess from "./components/UpdatedSuccess.jsx";
 
 function App() {
-  log('<App /> rendered');
+  const selectedPlace = useRef();
 
-  const [enteredNumber, setEnteredNumber] = useState(0);
-  const [chosenCount, setChosenCount] = useState(0);
+  const [userPlaces, setUserPlaces] = useState([]);
+  const [updatedPlacesStatus, setUpdatedPlacesStatus] = useState();
 
-  function handleChange(event) {
-    setEnteredNumber(+event.target.value);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  function handleStartRemovePlace(place) {
+    setModalIsOpen(true);
+    selectedPlace.current = place;
   }
 
-  function handleSetClick() {
-    setChosenCount(enteredNumber);
-    setEnteredNumber(0);
+  function handleStopRemovePlace() {
+    setModalIsOpen(false);
+  }
+
+  async function handleSelectPlace(selectedPlace) {
+    setUserPlaces((prevPickedPlaces) => {
+      if (!prevPickedPlaces) {
+        prevPickedPlaces = [];
+      }
+      if (prevPickedPlaces.some((place) => place.id === selectedPlace.id)) {
+        return prevPickedPlaces;
+      }
+      return [selectedPlace, ...prevPickedPlaces];
+    });
+
+    try {
+      let data = await updateAvilablePlaces([selectedPlace, ...userPlaces]);
+      setUpdatedPlacesStatus(data);
+    } catch (error) {
+      setUserPlaces(userPlaces);
+      console.log(error.message, "error occure");
+
+      setUpdatedPlacesStatus({
+        ...error,
+        message: error.message || "Failed to update",
+      });
+    }
+  }
+
+  const handleRemovePlace = useCallback(async function handleRemovePlace() {
+    setUserPlaces((prevPickedPlaces) =>
+      prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id)
+    );
+
+    setModalIsOpen(false);
+  }, []);
+
+  function handleUpdating() {
+    setUpdatedPlacesStatus(null);
   }
 
   return (
     <>
-      <Header />
+      {updatedPlacesStatus && (
+        <Modal open={updatedPlacesStatus} onClose={handleUpdating}>
+          {updatedPlacesStatus && updatedPlacesStatus ? (
+            <UpdatedSuccess
+              title="Places Updated Successfully"
+              message={updatedPlacesStatus.message}
+              onConfirm={handleUpdating}
+            />
+          ) : (
+            <Error
+              title="An Error Occured"
+              message={updatedPlacesStatus.message}
+              onConfirm={handleUpdating}
+            />
+          )}
+        </Modal>
+      )}
+
+      <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
+        <DeleteConfirmation
+          onCancel={handleStopRemovePlace}
+          onConfirm={handleRemovePlace}
+        />
+      </Modal>
+
+      <header>
+        <img src={logoImg} alt="Stylized globe" />
+        <h1>PlacePicker</h1>
+        <p>
+          Create your personal collection of places you would like to visit or
+          you have visited.
+        </p>
+      </header>
       <main>
-        <section id="configure-counter">
-          <h2>Set Counter</h2>
-          <input type="number" onChange={handleChange} value={enteredNumber} />
-          <button onClick={handleSetClick}>Set</button>
-        </section>
-        <Counter initialCount={chosenCount} />
+        <Places
+          title="I'd like to visit ..."
+          fallbackText="Select the places you would like to visit below."
+          places={userPlaces}
+          onSelectPlace={handleStartRemovePlace}
+        />
+
+        <AvailablePlaces onSelectPlace={handleSelectPlace} />
       </main>
     </>
   );
