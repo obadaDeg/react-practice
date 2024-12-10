@@ -3,64 +3,37 @@ import Places from "./Places.jsx";
 import Error from "./Error.jsx";
 import { sortPlacesByDistance } from "../utils/loc.js";
 import { fetchAvilablePlaces } from "../utils/http.js";
+import { useFetch } from "../hooks/useFetch.js";
+import { data } from "autoprefixer";
+
+async function fetchSortedAvilablePlaces() {
+  const data = await fetchAvilablePlaces();
+
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const sortedPlaces = sortPlacesByDistance(
+        data.places,
+        position.coords.latitude,
+        position.coords.longitude
+      );
+
+      resolve(sortedPlaces);
+    });
+  });
+}
 
 export default function AvailablePlaces({ onSelectPlace }) {
-  const [avilablPlacesState, setAvilablPlacesState] = useState({
-    isLoading: false,
-    avilablPlaces: [],
-    error: false,
-  });
-
-  useEffect(() => {
-    // fetch("http://localhost:3000/places")
-    //   .then((response) => {
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     console.log(data, "hi");
-    //     setAvilablPlaces(data.places);
-    //   });
-
-    (async () => {
-      setAvilablPlacesState((prevState) => ({
-        ...prevState,
-        isLoading: true,
-      }));
-
-      try {
-        const data = await fetchAvilablePlaces();
-
-        navigator.geolocation.getCurrentPosition((position) => {
-          const sortedPlaces = sortPlacesByDistance(
-            data.places,
-            position.coords.latitude,
-            position.coords.longitude
-          );
-
-          setAvilablPlacesState((prevState) => {
-            return {
-              ...prevState,
-              isLoading: false,
-              avilablPlaces: sortedPlaces,
-            };
-          });
-        });
-      } catch (e) {
-        setAvilablPlacesState((prevState) => ({
-          ...prevState,
-          error: {
-            message: e.message || "Something Wrong Happend, Please Try again!",
-          },
-        }));
-      }
-    })();
-  }, []);
-
-  if (avilablPlacesState.error) {
+  const {
+    isLoading,
+    data: avilablPlaces,
+    error,
+  } = useFetch(fetchSortedAvilablePlaces, []);
+  
+  if (error) {
     return (
       <Error
         title="An error occurred!"
-        message={avilablPlacesState.error.message}
+        message={error.message}
       />
     );
   }
@@ -68,8 +41,8 @@ export default function AvailablePlaces({ onSelectPlace }) {
   return (
     <Places
       title="Available Places"
-      places={avilablPlacesState.avilablPlaces}
-      isLoading={avilablPlacesState.isLoading}
+      places={avilablPlaces}
+      isLoading={isLoading}
       loadingContent="Fetching Place Data..."
       fallbackText="No places available."
       onSelectPlace={onSelectPlace}
