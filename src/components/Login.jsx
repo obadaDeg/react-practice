@@ -12,6 +12,11 @@ export default function Login() {
     console.log(emailEntred, passwordEntred);
   }
 
+  function handleReset() {
+    email.current.value = "";
+    password.current.value = "";
+  }
+
   return (
     <form onSubmit={handleSubmission}>
       <h2>Login</h2>
@@ -29,7 +34,9 @@ export default function Login() {
       </div>
 
       <p className="form-actions">
-        <button className="button button-flat">Reset</button>
+        <button className="button button-flat" onClick={handleReset}>
+          Reset
+        </button>
         <button className="button">Login</button>
       </p>
     </form>

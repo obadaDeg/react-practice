@@ -6,6 +6,8 @@ export default function Login() {
     password: "",
   });
 
+  
+
   function handleSubmission(event) {
     event.preventDefault();
     console.log(formData);
@@ -25,6 +27,13 @@ export default function Login() {
     setFormData((prevVals) => ({
       ...prevVals,
       [id]: value,
+    }));
+  }
+
+  function handleReset() {
+    setFormData((prevVals) => ({
+      email: "",
+      password: "",
     }));
   }
 
@@ -60,7 +69,7 @@ export default function Login() {
       </div>
 
       <p className="form-actions">
-        <button className="button button-flat">Reset</button>
+        <button className="button button-flat" onClick={handleReset}>Reset</button>
         <button className="button">Login</button>
       </p>
     </form>
