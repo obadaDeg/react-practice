@@ -1,31 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function Login() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const email = useRef();
+  const password = useRef();
 
   function handleSubmission(event) {
     event.preventDefault();
-    console.log(formData);
-  }
+    const emailEntred = email.current.value;
+    const passwordEntred = password.current.value;
 
-  // somehting strange it adds undefined: undefined to the key values
-  // function handleInputChange({id, value}) {
-  //   setFormData((prevVals) => ({
-  //     ...prevVals,
-  //     [id]: value,
-  //   }));
-  // }
-
-  function handleInputChange(event) {
-    const { id, value } = event.target;
-
-    setFormData((prevVals) => ({
-      ...prevVals,
-      [id]: value,
-    }));
+    console.log(emailEntred, passwordEntred);
   }
 
   return (
@@ -35,27 +19,12 @@ export default function Login() {
       <div className="control-row">
         <div className="control no-margin">
           <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            // onChange={(e) => {
-            //   handleInputChange(e.target);
-            // }} // somehting strange it adds undefined: undefined to the key values
-          />
+          <input ref={email} id="email" type="email" name="email" />
         </div>
 
         <div className="control no-margin">
           <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-          />
+          <input ref={password} id="password" type="password" name="password" />
         </div>
       </div>
 
