@@ -1,9 +1,12 @@
-import Counter from './components/Counter';
-
+import Counter from "./components/Counter";
+import Auth from "./components/Auth.jsx"
 
 function App() {
   return (
-    <Counter />
+    <>
+      <Auth />
+      <Counter />
+    </>
   );
 }
 
