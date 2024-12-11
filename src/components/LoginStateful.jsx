@@ -22,7 +22,9 @@ export default function Login() {
 
   function handleSubmission(event) {
     event.preventDefault();
-    console.log(formData);
+    if (!(invalidEmail || invalidPassword)) {
+      console.log("submit ", formData.email, formData.password);
+    }
   }
 
   // somehting strange it adds undefined: undefined to the key values
