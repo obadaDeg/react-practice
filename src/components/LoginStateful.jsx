@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { hasMinLength, isEmail, isNotEmpty } from "../utils/validation.js";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -6,7 +7,18 @@ export default function Login() {
     password: "",
   });
 
-  
+  const [editedData, setEditedData] = useState({
+    email: false,
+    password: false,
+  });
+
+  const invalidEmail =
+    editedData.email && !isEmail(formData.email) && isNotEmpty(formData.email);
+
+  const invalidPassword =
+    editedData.password &&
+    isNotEmpty(formData.password) &&
+    !hasMinLength(formData.password, 6);
 
   function handleSubmission(event) {
     event.preventDefault();
@@ -28,6 +40,11 @@ export default function Login() {
       ...prevVals,
       [id]: value,
     }));
+
+    setEditedData((prevVals) => ({
+      ...prevVals,
+      [id]: false,
+    }));
   }
 
   function handleReset() {
@@ -37,8 +54,15 @@ export default function Login() {
     }));
   }
 
+  function handleOnBlure(event) {
+    setEditedData((prevVals) => ({
+      ...prevVals,
+      [event.target.id]: true,
+    }));
+  }
+
   return (
-    <form onSubmit={handleSubmission}>
+    <form onSubmit={handleSubmission} noValidate>
       <h2>Login</h2>
 
       <div className="control-row">
@@ -49,11 +73,15 @@ export default function Login() {
             type="email"
             name="email"
             value={formData.email}
+            onBlur={handleOnBlure}
             onChange={handleInputChange}
             // onChange={(e) => {
             //   handleInputChange(e.target);
             // }} // somehting strange it adds undefined: undefined to the key values
           />
+          <div className="control-error">
+            {invalidEmail && <p>Please enter a valid email.</p>}
+          </div>
         </div>
 
         <div className="control no-margin">
@@ -63,13 +91,21 @@ export default function Login() {
             type="password"
             name="password"
             value={formData.password}
+            onBlur={handleOnBlure}
             onChange={handleInputChange}
           />
+          <div className="control-error">
+            {invalidPassword && (
+              <p>Password should be at least 6 characters long.</p>
+            )}
+          </div>
         </div>
       </div>
 
       <p className="form-actions">
-        <button className="button button-flat" onClick={handleReset}>Reset</button>
+        <button className="button button-flat" onClick={handleReset}>
+          Reset
+        </button>
         <button className="button">Login</button>
       </p>
     </form>
