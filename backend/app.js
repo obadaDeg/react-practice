@@ -18,6 +18,7 @@ app.use('/events', eventRoutes);
 app.use((error, req, res, next) => {
   const status = error.status || 500;
   const message = error.message || 'Something went wrong.';
+  console.log(req.url,error)
   res.status(status).json({ message: message });
 });
 
